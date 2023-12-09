@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="js/main.js" defer></script>
+  <script src="lib/jsSHA-3.3.1/sha512.js" defer></script>
+  <title>Password Manager Generator</title>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    input {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <form>
+    <h2>Login</h2>
+    <label for="domain">Domain:</label>
+    <br>
+    <input type="text" id="domain" name="domain" placeholder="Enter your domain" required>
+    <br>
+    <label for="username">Username:</label>
+    <br>
+    <input type="text" id="username" name="username" placeholder="Enter your username" required>
+    <br>
+    <label for="masterPassword">Master Password:</label>
+    <br>
+    <input type="password" id="masterPassword" name="masterPassword" placeholder="Enter your master password" required>
+    <br>
+    <label for="generatedPassword">Generated Password:</label>
+    <br>
+    <input type="password" id="generatedPassword" name="generatedPassword" placeholder="Enter your generatedPassword" required>
+  </form>
+
+</body>
+</html>

@@ -18,6 +18,7 @@
       ],
       "js": [
         "js/main.js",
+        "js/extension.js",
         "lib/jsSHA-3.3.1/sha512.js"
       ]
     }
