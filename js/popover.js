@@ -1,5 +1,7 @@
 const GENERATED_PASSWORD_LENGTH = 24; // max 88
-const LABEL_WIDTH = "270px";
+const LABEL_WIDTH = "13rem";
+const INPUT_WIDTH = "28rem";
+const MARGIN = "1REM";
 
 function getParentDomainsChain() {
 
@@ -25,8 +27,16 @@ function createPopover(document) {
     popover.style.padding = '8px';
     popover.style.borderRadius = '10px';
     popover.style.zIndex = '9999';
+    popover.style.fontFamily = 'Roboto, sans-serif';
 
     return popover;
+}
+
+function addTitle(document, popover) {
+
+    const popoverTitle = document.createElement('h2');
+    popoverTitle.innerHTML = 'Password Manager Generator';
+    popover.appendChild(popoverTitle);
 }
 
 function createCloseButton(document, popover) {
@@ -42,122 +52,221 @@ function createCloseButton(document, popover) {
     return closeButton;
 }
 
-function createDomainSelect(document, popover) {
+function createCopyButton(document, popover) {
 
-    const popoverDomainLabel = document.createElement('strong');
-    popoverDomainLabel.textContent = 'Domain: ';
+    const copyButton = document.createElement('button');
+    copyButton.innerHTML = '&#9112;';
+    copyButton.style.cursor = 'pointer';
+    copyButton.style.float = 'right';
 
-    popover.appendChild(popoverDomainLabel);
+    popover.appendChild(copyButton);
+
+    return copyButton;
+}
+
+function createDomainInput(document, popover) {
+
+    const domainLabel = document.createElement('Label');
+    domainLabel.htmlFor = 'domainInput';
+    domainLabel.style.fontWeight = 'bold';
+    domainLabel.textContent = 'Domain: ';
+
+    popover.appendChild(domainLabel);
     addBR(popover)
 
-    const popoverDomainSelect = document.createElement('select');
-    popoverDomainSelect.style.width = LABEL_WIDTH;
+    const domainInput = document.createElement('input');
+    domainInput.id = 'domainInput';
+    domainInput.type = 'text';
+    domainInput.placeholder = 'Domain...';
+    domainInput.style.width = INPUT_WIDTH;
+    domainInput.style.marginBottom = MARGIN;
+
+    popover.appendChild(domainInput);
+    addBR(popover)
+
+    return domainInput;
+}
+
+function createDomainSelect(document, popover) {
+
+    const domainLabel = document.createElement('Label');
+    domainLabel.htmlFor = 'domainSelect';
+    domainLabel.style.fontWeight = 'bold';
+    domainLabel.textContent = 'Domain: ';
+
+    popover.appendChild(domainLabel);
+    addBR(popover)
+
+    const domainSelect = document.createElement('select');
+    domainSelect.id = 'domainSelect';
+    domainSelect.style.width = INPUT_WIDTH;
+    domainSelect.style.marginBottom = MARGIN;
     const parentDomainsChain = getParentDomainsChain();
     for (var i = 0; i < parentDomainsChain.length; i++) {
         var option = document.createElement('option');
         option.value = parentDomainsChain[i];
         option.text = parentDomainsChain[i];
-        popoverDomainSelect.appendChild(option);
+        domainSelect.appendChild(option);
     }
 
-    popover.appendChild(popoverDomainSelect);
+    popover.appendChild(domainSelect);
     addBR(popover)
 
-    return popoverDomainSelect;
+    return domainSelect;
 }
 
-// Funtion to create the User Name Input
 function createUserNameInput(document, popover, userNameField) {
 
     const userName = userNameField ? userNameField.value : "";
 
-    const popoverUserNameLabel = document.createElement('strong');
-    popoverUserNameLabel.textContent = 'User Name: ';
+    const userNameLabel = document.createElement('Label');
+    userNameLabel.htmlFor = 'userNameInput';
+    userNameLabel.style.fontWeight = 'bold';
+    userNameLabel.textContent = 'User Name: ';
 
-    popover.appendChild(popoverUserNameLabel);
+    popover.appendChild(userNameLabel);
     addBR(popover)
 
-    const popoverUserNameInput = document.createElement('input');
-    popoverUserNameInput.type = 'text';
-    popoverUserNameInput.value = userName;
-    popoverUserNameInput.style.width = LABEL_WIDTH;
+    const userNameInput = document.createElement('input');
+    userNameInput.id = 'userNameInput';
+    userNameInput.type = 'text';
+    userNameInput.value = userName;
+    userNameInput.placeholder = 'User name...';
+    userNameInput.style.width = INPUT_WIDTH;
+    userNameInput.style.marginBottom = MARGIN;
 
-    popover.appendChild(popoverUserNameInput);
+    popover.appendChild(userNameInput);
     addBR(popover)
 
-    return popoverUserNameInput;
+    return userNameInput;
 }
 
-// Funtion to create the Password Input
 function createPasswordInput(document, popover, label) {
 
-    const popoverPasswordLabel = document.createElement('strong');
-    popoverPasswordLabel.textContent = label + ' password: ';
+    const passwordLabel = document.createElement('Label');
+    passwordLabel.htmlFor = label + 'PasswordInput';
+    passwordLabel.style.fontWeight = 'bold';
+    passwordLabel.textContent = label + ' password: ';
 
-    popover.appendChild(popoverPasswordLabel);
+    popover.appendChild(passwordLabel);
     addBR(popover)
 
-    const popoverPasswordContainer = document.createElement('div');
-    popoverPasswordContainer.style.position = 'relative';
-    const popoverPasswordInput = document.createElement('input');
-    popoverPasswordInput.id = 'popover' + label + 'PasswordInput';
-    popoverPasswordInput.type = 'password';
-    popoverPasswordInput.style.width = LABEL_WIDTH;
-    popoverPasswordContainer.appendChild(popoverPasswordInput);
-    const popoverPasswordToggle = document.createElement('span');
-    popoverPasswordToggle.innerHTML = '&#128274;';   
-    popoverPasswordToggle.style.position = 'absolute';
-    popoverPasswordToggle.style.right = '5px';
-    popoverPasswordToggle.style.top = '50%';
-    popoverPasswordToggle.style.transform = 'translateY(-50%)';
-    popoverPasswordToggle.style.cursor = 'pointer';
-    popoverPasswordToggle.addEventListener('click', function (event) {
-        if (popoverPasswordInput.type === 'password') {
-            popoverPasswordInput.type = 'text';
-            popoverPasswordToggle.innerHTML = '&#128275;'; // Open lock icon
+    const passwordContainer = document.createElement('div');
+    passwordContainer.style.position = 'relative';
+    passwordContainer.style.width = INPUT_WIDTH;
+   
+    const passwordInput = document.createElement('input');
+    passwordInput.id = label + 'PasswordInput';
+    passwordInput.type = 'password';
+    passwordInput.style.width = INPUT_WIDTH;
+    passwordInput.style.marginBottom = MARGIN;
+    passwordInput.placeholder = label + ' password...';
+    passwordContainer.appendChild(passwordInput);
+    
+    const passwordToggle = document.createElement('span');
+    passwordToggle.innerHTML = '&#128274;';   
+    passwordToggle.style.position = 'absolute';
+    passwordToggle.style.right = '5px';
+    passwordToggle.style.cursor = 'pointer';
+    passwordToggle.addEventListener('click', function (event) {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            passwordToggle.innerHTML = '&#128275;'; // Open lock icon
         } else {
-            popoverPasswordInput.type = 'password';
-            popoverPasswordToggle.innerHTML = '&#128274;'; // Closed lock icon
+            passwordInput.type = 'password';
+            passwordToggle.innerHTML = '&#128274;'; // Closed lock icon
         }
     });
-    popoverPasswordContainer.appendChild(popoverPasswordToggle);
+    passwordContainer.appendChild(passwordToggle);
 
-    popover.appendChild(popoverPasswordContainer);
+    popover.appendChild(passwordContainer);
 
-    return popoverPasswordInput;
+    return passwordInput;
 }
 
-// Funtion to add a Separation Line
+function createPasswordLengthInput(document, popover) {
+
+    const passwordLengthLabel = document.createElement('Label');
+    passwordLengthLabel.htmlFor = 'passwordLengthInput';
+    passwordLengthLabel.style.fontWeight = 'bold';
+    passwordLengthLabel.textContent = 'Passord Length: ';
+
+    popover.appendChild(passwordLengthLabel);
+    addBR(popover)
+
+    const passwordLengthInput = document.createElement('input');
+    passwordLengthInput.id = 'passwordLengthInput';
+    passwordLengthInput.type = 'number';
+    passwordLengthInput.value = GENERATED_PASSWORD_LENGTH;
+    passwordLengthInput.style.width = INPUT_WIDTH;
+    passwordLengthInput.style.marginBottom = MARGIN;
+
+    popover.appendChild(passwordLengthInput);
+    addBR(popover)
+
+    return passwordLengthInput;
+}
+
+function createOptionsContainer(document, popover) {
+
+    const optionsButton = document.createElement('button');
+    optionsButton.innerHTML = 'More options...';
+    optionsButton.style.cursor = 'pointer';
+    popover.appendChild(optionsButton);
+    addBR(popover)
+
+    const optionsContainer = document.createElement('div');
+    optionsContainer.style.display = 'none';
+    popover.appendChild(optionsContainer);
+
+    optionsButton.addEventListener('click', function () {
+        console.log(optionsContainer.style.display);
+        if (optionsContainer.style.display === 'none') {
+            optionsContainer.style.display = 'block';
+            optionButton.innerHTML = 'Less options...';
+        } else {
+            optionsContainer.style.display = 'none';
+            optionButton.innerHTML = 'More options...';
+        }
+    });
+
+    return optionsContainer;
+}
+
+function createChekBox(document, popover, label) {
+
+    const checkBoxLabel = document.createElement('Label');
+    checkBoxLabel.htmlFor = 'popover' + label + 'CheckBox';
+    checkBoxLabel.style.fontWeight = 'bold';
+    checkBoxLabel.style.minWidth = LABEL_WIDTH;
+    checkBoxLabel.style.display = 'inline-block';
+    checkBoxLabel.style.cursor = 'pointer';
+    checkBoxLabel.textContent = label + ' characters ';
+    
+    popover.appendChild(checkBoxLabel);
+
+    const checkBox = document.createElement('input');
+    checkBox.id = 'popover' + label + 'CheckBox';
+    checkBox.type = 'CheckBox';
+    checkBox.checked = true;
+    checkBox.style.marginRight = '0.1rem';
+    checkBox.style.cursor = 'pointer';
+
+    popover.appendChild(checkBox);
+
+    return checkBox;
+}
+
 function addSeparationLine(document, popover) {
 
     const separationLine = document.createElement('hr');
-    separationLine.style.border = '1px solid black';
+    separationLine.style.border = '1px solid #ccc';
+    separationLine.style.width = INPUT_WIDTH;
+    separationLine.style.marginBottom = MARGIN;
+
     popover.appendChild(separationLine);
 }
 
-// Funtion to add a Separation Line
 function addBR(popover) {
     popover.appendChild(document.createElement('br'));
-}
-
-// Funtion to create a CheckBox
-function createChekBox(document, popover, label) {
-
-    const popoverCheckBox = document.createElement('input');
-    popoverCheckBox.type = 'CheckBox';
-    popoverCheckBox.checked = true;
-    
-    popover.appendChild(popoverCheckBox);
-
-    const popoverCheckBoxLabel = document.createElement('strong');
-    popoverCheckBoxLabel.textContent = ' ' + label + ' characters ';
-    
-    popover.appendChild(popoverCheckBoxLabel);
-    
-    return popoverCheckBox;
-}
-
-// Funtion to create the
-function create(document, popover) {
-    return ;
 }

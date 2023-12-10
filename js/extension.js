@@ -1,19 +1,18 @@
-// Function to update user name anda password fields
 function updateFields(updateFieldsObject) {
 
     const passwordSeed = {
-        'domainSeed': updateFieldsObject.popoverDomainSelect.value,
-        'userNameSeed': updateFieldsObject.popoverUserNameInput.value,
-        'masterPasswordSeed': updateFieldsObject.popoverMasterPasswordInput.value,
-        'passwordLength': GENERATED_PASSWORD_LENGTH,
-        'hasOthers': updateFieldsObject.popoverSpecialCheckBox.checked,
-        'hasNumber': updateFieldsObject.popoverNumberCheckBox.checked,
-        'hasUpper': updateFieldsObject.popoverUpperCheckBox.checked,
-        'hasLower': updateFieldsObject.popoverLowerCheckBox.checked
+        'domainSeed': updateFieldsObject.domainSelect.value,
+        'userNameSeed': updateFieldsObject.userNameInput.value,
+        'masterPasswordSeed': updateFieldsObject.masterPasswordInput.value,
+        'passwordLength': updateFieldsObject.passwordLengthInput.value,
+        'hasOthers': updateFieldsObject.specialCheckBox.checked,
+        'hasNumber': updateFieldsObject.numberCheckBox.checked,
+        'hasUpper': updateFieldsObject.upperCheckBox.checked,
+        'hasLower': updateFieldsObject.lowerCheckBox.checked
     }
     const newPassword = generatePasswordFromSeeds(passwordSeed)
 
-    updateFieldsObject.popoverGeneratedPasswordInput.value = newPassword;
+    updateFieldsObject.generatedPasswordInput.value = newPassword;
 
     if (updateFieldsObject.userNameField) {
         updateFieldsObject.userNameField.value = updateFieldsObject.popoverUserNameInput.value;
@@ -49,54 +48,60 @@ function initializePopover(passwordField) {
 
     const popover = createPopover(document);
     const closeButton = createCloseButton(document, popover);
-    closeButton.addEventListener('click', function () {
-        popover.style.display = 'none';
-    });
-
-    const popoverDomainSelect = createDomainSelect(document, popover);
-    const popoverUserNameInput = createUserNameInput(document, popover, userNameField);
-    const popoverMasterPasswordInput = createPasswordInput(document, popover, 'Master');
-    addSeparationLine(document, popover);
-    const popoverUpperCheckBox = createChekBox(document, popover, 'Upper');
-    const popoverSpecialCheckBox = createChekBox(document, popover, 'Special');
-    addBR(popover);
-    const popoverLowerCheckBox = createChekBox(document, popover, 'Lower');
-    const popoverNumberCheckBox = createChekBox(document, popover, 'Number');
-    addSeparationLine(document, popover);
-    const popoverGeneratedPasswordInput = createPasswordInput(document, popover, 'Generated');
+    addTitle(document, popover)
+    const domainSelect = createDomainSelect(document, popover);
+    const userNameInput = createUserNameInput(document, popover, userNameField);
+    const masterPasswordInput = createPasswordInput(document, popover, 'Master');
+    const optionsContainer = createOptionsContainer(document, popover);
+    addSeparationLine(document, optionsContainer);
+    const passwordLengthInput = createPasswordLengthInput(document, optionsContainer);
+    const upperCheckBox = createChekBox(document, optionsContainer, 'Upper');
+    const specialCheckBox = createChekBox(document, optionsContainer, 'Special');
+    addBR(optionsContainer);
+    const lowerCheckBox = createChekBox(document, optionsContainer, 'Lower');
+    const numberCheckBox = createChekBox(document, optionsContainer, 'Number');
+    addSeparationLine(document, optionsContainer);
+    const generatedPasswordInput = createPasswordInput(document, optionsContainer, 'Generated');
 
     const updateFieldsObject =  {
         'userNameField': userNameField,
         'passwordField': passwordField,
-        'popoverDomainSelect': popoverDomainSelect,
-        'popoverUserNameInput': popoverUserNameInput,
-        'popoverMasterPasswordInput': popoverMasterPasswordInput,
-        'popoverSpecialCheckBox': popoverSpecialCheckBox,
-        'popoverNumberCheckBox': popoverNumberCheckBox, 
-        'popoverUpperCheckBox': popoverUpperCheckBox,
-        'popoverLowerCheckBox': popoverLowerCheckBox,
-        'popoverGeneratedPasswordInput': popoverGeneratedPasswordInput,
+        'domainSelect': domainSelect,
+        'userNameInput': userNameInput,
+        'masterPasswordInput': masterPasswordInput,
+        'passwordLengthInput': passwordLengthInput,
+        'specialCheckBox': specialCheckBox,
+        'numberCheckBox': numberCheckBox, 
+        'upperCheckBox': upperCheckBox,
+        'lowerCheckBox': lowerCheckBox,
+        'generatedPasswordInput': generatedPasswordInput,
     }
 
-    popoverDomainSelect.addEventListener('input', function (event) {
+    closeButton.addEventListener('click', function () {
+        popover.style.display = 'none';
+    });
+    domainSelect.addEventListener('input', function (event) {
         updateFields(updateFieldsObject);
     });
-    popoverUserNameInput.addEventListener('input', function (event) {
+    userNameInput.addEventListener('input', function (event) {
         updateFields(updateFieldsObject);
     });
-    popoverMasterPasswordInput.addEventListener('input', function (event) {
+    masterPasswordInput.addEventListener('input', function (event) {
         updateFields(updateFieldsObject);
     });
-    popoverSpecialCheckBox.addEventListener('input', function (event) {
+    passwordLengthInput.addEventListener('input', function (event) {
         updateFields(updateFieldsObject);
     });
-    popoverNumberCheckBox.addEventListener('input', function (event) {
+    specialCheckBox.addEventListener('input', function (event) {
         updateFields(updateFieldsObject);
     });
-    popoverLowerCheckBox.addEventListener('input', function (event) {
+    numberCheckBox.addEventListener('input', function (event) {
         updateFields(updateFieldsObject);
     });
-    popoverUpperCheckBox.addEventListener('input', function (event) {
+    lowerCheckBox.addEventListener('input', function (event) {
+        updateFields(updateFieldsObject);
+    });
+    upperCheckBox.addEventListener('input', function (event) {
         updateFields(updateFieldsObject);
     });
 
@@ -136,8 +141,8 @@ function addFocusListenerToPasswordField(field) {
 
         const passwordFields = field.querySelectorAll('input[type="password"]');
         passwordFields.forEach(field => {
-            if ( (field.id != 'popoverMasterPasswordInput') &&
-                 (field.id != 'popoverGeneratedPasswordInput') ) {
+            if ( (field.id != 'masterPasswordInput') &&
+                 (field.id != 'meneratedPasswordInput') ) {
                     field.addEventListener('focus', handleFocusOnPasswordField);
             }
         });

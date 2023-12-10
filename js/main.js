@@ -1,7 +1,9 @@
 // Function to generate a password from seeds
 function generatePasswordFromSeeds(passwordSeed) {
 
-    const data = passwordSeed.domainSeed + passwordSeed.userNameSeed + passwordSeed.masterPasswordSeed;
+    const data = passwordSeed.domainSeed.toLowerCase() 
+        + passwordSeed.userNameSeed.toLowerCase()
+        + passwordSeed.masterPasswordSeed;
     const hash = generateHashFromText(data);
 
     return normalizePassword(hash, passwordSeed);
