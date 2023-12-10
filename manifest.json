@@ -19,6 +19,7 @@
       "js": [
         "js/main.js",
         "js/extension.js",
+        "js/popover.js",
         "lib/jsSHA-3.3.1/sha512.js"
       ]
     }

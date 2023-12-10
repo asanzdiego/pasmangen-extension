@@ -1,3 +1,12 @@
+// Function to generate a password from seeds
+function generatePasswordFromSeeds(passwordSeed) {
+
+    const data = passwordSeed.domainSeed + passwordSeed.userNameSeed + passwordSeed.masterPasswordSeed;
+    const hash = generateHashFromText(data);
+
+    return normalizePassword(hash, passwordSeed);
+}
+
 // Function to generate a hash from text
 function generateHashFromText(text) {
 
@@ -6,9 +15,14 @@ function generateHashFromText(text) {
     return shaObj.getHash("B64");
 }
 
-// Funtion to normalize de password (minimun lower, upper, number and others)
-function normalizePassword(password, passwordLength, 
-    hasOthers, hasNumber, hasUpper, hasLower) {
+// Funtion to normalize de password
+function normalizePassword(password, passwordSeed) {
+
+    passwordLength = passwordSeed.passwordLength;
+    hasOthers = passwordSeed.hasOthers;
+    hasNumber = passwordSeed.hasNumber;
+    hasUpper = passwordSeed.hasUpper;
+    hasLower = passwordSeed.hasLower;
 
     var newPassword = password.slice(0, passwordLength);
 
@@ -85,15 +99,4 @@ function normalizePassword(password, passwordLength,
     }
 
     return newPassword;
-}
-
-// Function to generate a password from seeds
-function generatePasswordFromSeeds(domainSeed, userNameSeed, masterPasswordSeed, passwordLength, 
-    hasOthers, hasNumber, hasUpper, hasLower) {
-
-    const data = domainSeed + userNameSeed + masterPasswordSeed;
-    const hash = generateHashFromText(data);
-
-    return normalizePassword(hash, passwordLength, 
-        hasOthers, hasNumber, hasUpper, hasLower);
 }
