@@ -1,4 +1,3 @@
-// Function to generate a password from seeds
 function generatePasswordFromSeeds(passwordSeed) {
 
     const data = passwordSeed.domainSeed.toLowerCase() 
@@ -9,7 +8,6 @@ function generatePasswordFromSeeds(passwordSeed) {
     return normalizePassword(hash, passwordSeed);
 }
 
-// Function to generate a hash from text
 function generateHashFromText(text) {
 
     const shaObj = new jsSHA("SHA-512", "TEXT", { encoding: "UTF8" });
@@ -17,7 +15,6 @@ function generateHashFromText(text) {
     return shaObj.getHash("B64");
 }
 
-// Funtion to normalize de password
 function normalizePassword(password, passwordSeed) {
 
     passwordLength = passwordSeed.passwordLength;

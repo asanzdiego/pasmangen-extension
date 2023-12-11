@@ -22,17 +22,15 @@ function initializePopover() {
     const domainInput = createDomainInput(document, popover);
     const userNameInput = createUserNameInput(document, popover);
     const masterPasswordInput = createPasswordInput(document, popover, 'Master');
+    const popoverCopyButton = createCopyButton(document, popover)
+    const generatedPasswordInput = createPasswordInput(document, popover, 'Generated');
     const optionsContainer = createOptionsContainer(document, popover);
-    addSeparationLine(document, optionsContainer);
     const passwordLengthInput = createPasswordLengthInput(document, optionsContainer);
     const upperCheckBox = createChekBox(document, optionsContainer, 'Upper');
     const specialCheckBox = createChekBox(document, optionsContainer, 'Special');
     addBR(optionsContainer);
     const lowerCheckBox = createChekBox(document, optionsContainer, 'Lower');
     const numberCheckBox = createChekBox(document, optionsContainer, 'Number');
-    addSeparationLine(document, optionsContainer);
-    const popoverCopyButton = createCopyButton(document, popover)
-    const generatedPasswordInput = createPasswordInput(document, popover, 'Generated');
 
     const updateFieldsObject =  {
         'domainInput': domainInput,

@@ -212,6 +212,8 @@ function createOptionsContainer(document, popover) {
     const optionsButton = document.createElement('button');
     optionsButton.innerHTML = 'More options...';
     optionsButton.style.cursor = 'pointer';
+    optionsButton.style.marginBottom = MARGIN;
+    
     popover.appendChild(optionsButton);
     addBR(popover)
 
@@ -220,13 +222,12 @@ function createOptionsContainer(document, popover) {
     popover.appendChild(optionsContainer);
 
     optionsButton.addEventListener('click', function () {
-        console.log(optionsContainer.style.display);
         if (optionsContainer.style.display === 'none') {
             optionsContainer.style.display = 'block';
-            optionButton.innerHTML = 'Less options...';
+            optionsButton.innerHTML = 'Less options...';
         } else {
             optionsContainer.style.display = 'none';
-            optionButton.innerHTML = 'More options...';
+            optionsButton.innerHTML = 'More options...';
         }
     });
 

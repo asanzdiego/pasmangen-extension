@@ -15,7 +15,7 @@ function updateFields(updateFieldsObject) {
     updateFieldsObject.generatedPasswordInput.value = newPassword;
 
     if (updateFieldsObject.userNameField) {
-        updateFieldsObject.userNameField.value = updateFieldsObject.popoverUserNameInput.value;
+        updateFieldsObject.userNameField.value = updateFieldsObject.userNameInput.value;
     }
 
     updateFieldsObject.passwordField.value = newPassword;
@@ -53,15 +53,13 @@ function initializePopover(passwordField) {
     const userNameInput = createUserNameInput(document, popover, userNameField);
     const masterPasswordInput = createPasswordInput(document, popover, 'Master');
     const optionsContainer = createOptionsContainer(document, popover);
-    addSeparationLine(document, optionsContainer);
+    const generatedPasswordInput = createPasswordInput(document, optionsContainer, 'Generated');
     const passwordLengthInput = createPasswordLengthInput(document, optionsContainer);
     const upperCheckBox = createChekBox(document, optionsContainer, 'Upper');
     const specialCheckBox = createChekBox(document, optionsContainer, 'Special');
     addBR(optionsContainer);
     const lowerCheckBox = createChekBox(document, optionsContainer, 'Lower');
     const numberCheckBox = createChekBox(document, optionsContainer, 'Number');
-    addSeparationLine(document, optionsContainer);
-    const generatedPasswordInput = createPasswordInput(document, optionsContainer, 'Generated');
 
     const updateFieldsObject =  {
         'userNameField': userNameField,
@@ -79,6 +77,9 @@ function initializePopover(passwordField) {
 
     closeButton.addEventListener('click', function () {
         popover.style.display = 'none';
+    });
+    userNameField.addEventListener('input', function (event) {
+        userNameInput.value = userNameField.value;
     });
     domainSelect.addEventListener('input', function (event) {
         updateFields(updateFieldsObject);
@@ -141,8 +142,8 @@ function addFocusListenerToPasswordField(field) {
 
         const passwordFields = field.querySelectorAll('input[type="password"]');
         passwordFields.forEach(field => {
-            if ( (field.id != 'masterPasswordInput') &&
-                 (field.id != 'meneratedPasswordInput') ) {
+            if ( (field.id != 'MasterPasswordInput') &&
+                 (field.id != 'GeneratedPasswordInput') ) {
                     field.addEventListener('focus', handleFocusOnPasswordField);
             }
         });
