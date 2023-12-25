@@ -1,6 +1,23 @@
+function generateCodesCardCell(domain, userName, numberCodesCardCells) {
+
+    const text = "" + domain.toLowerCase() + userName.toLowerCase();
+
+    let sumCharCode = 0;
+    for (var i = 0; i < text.length; i++) {
+        sumCharCode += text.charCodeAt(i);
+    }
+    return sumCharCode % numberCodesCardCells;
+}
+
+function generateCodesCardCellLabel(domain, userName, numberCodesCardCells) {
+
+    const codesCardCell = generateCodesCardCell(domain, userName, numberCodesCardCells);
+    return 'Code of Card Cell [' + codesCardCell + ']';
+}
+
 function generatePasswordFromSeeds(passwordSeed) {
 
-    const data = passwordSeed.domainSeed.toLowerCase() 
+    const data = passwordSeed.domainSeed.toLowerCase()
         + passwordSeed.userNameSeed.toLowerCase()
         + passwordSeed.masterPasswordSeed;
     const hash = generateHashFromText(data);
@@ -75,7 +92,7 @@ function normalizePassword(password, passwordSeed) {
     } else {
         newPassword = newPassword.toUpperCase();
     }
-    
+
     if ((!hasLower) && (!hasUpper)) {
         var i = 0;
         var alphabet = '091827364509182736450918273645';
@@ -83,7 +100,7 @@ function normalizePassword(password, passwordSeed) {
             return alphabet.charAt(i++);
         });
     }
-    
+
     if ((!hasLower) && (!hasUpper) && (!hasNumber)) {
         var i = 0;
         var alphabet = '!@#$%-_+=\|;:,.!@#$%-_+=\|;:,.';
