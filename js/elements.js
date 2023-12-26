@@ -1,9 +1,11 @@
 const GENERATED_PASSWORD_LENGTH = 24; // max 88
+const GENERATED_USERNAME_LENGTH = 12; // max 88
 const NUMBER_CODES_CARD_CELLS = 40;
-const LABEL_WIDTH = "14rem";
-const INPUT_WIDTH = "28rem";
-const NUMBER_INPUT_WIDTH = "3rem";
-const MARGIN = "1REM";
+const LABEL_WIDTH = '19rem';
+const INPUT_WIDTH = '28rem';
+const MIN_INPUT_WIDTH = '9rem';
+const NUMBER_INPUT_WIDTH = '3rem';
+const MARGIN = '0.7rem';
 
 function getParentDomainsChain() {
 
@@ -23,6 +25,7 @@ function addTitle(document, parentElement) {
 
     const title = document.createElement('h2');
     title.innerHTML = 'Password Manager Generator';
+    title.style.textAlign = 'center';
     
     parentElement.appendChild(title);
 }
@@ -73,7 +76,7 @@ function createLabel(document, parentElement, htmlFor, textContent) {
     return label;
 }
 
-function createInputText(document, parentElement, id, placeholder, value) {
+function createInputText(document, parentElement, id, placeholder, value, readOnly) {
 
     const input = document.createElement('input');
     input.id = id;
@@ -84,6 +87,10 @@ function createInputText(document, parentElement, id, placeholder, value) {
 
     if (value) {
         input.value = value;
+    }
+
+    if (readOnly) {
+        input.readOnly = true;
     }
 
     parentElement.appendChild(input);
@@ -136,7 +143,7 @@ function createCopyButton(document, parentElement) {
     return copyButton;
 }
 
-function createDomainInput(document, parentElement, isIndex) {
+function createDomainInput(document, parentElement, isIndex, value) {
 
     createLabel(document, parentElement, 'domainInput', 'Domain: ');
     addBR(parentElement);
@@ -149,6 +156,11 @@ function createDomainInput(document, parentElement, isIndex) {
     domainInput.id = 'domainInput';
     domainInput.style.width = INPUT_WIDTH;
     domainInput.style.marginBottom = MARGIN;
+
+    if (value) {
+        domainInput.value = value;
+    }
+
     const parentDomainsChain = getParentDomainsChain();
     for (var i = 0; i < parentDomainsChain.length; i++) {
         var option = document.createElement('option');
@@ -163,12 +175,16 @@ function createDomainInput(document, parentElement, isIndex) {
     return domainInput;
 }
 
-function createUserNameInput(document, parentElement, userNameField) {
+function createUserNameInput(document, parentElement, userNameField, value) {
 
-    createLabel(document, parentElement, 'userNameInput', 'User Name: ');
+    createLabel(document, parentElement, 'userNameInput', 'User name: ');
     addBR(parentElement);
 
-    const userName = userNameField ? userNameField.value : "";
+    let userName = userNameField ? userNameField.value : null;
+
+    if (value) {
+        userName = value;
+    }
 
     return createInputText(document, parentElement, 'userNameInput', 'User name...', userName);
 }
@@ -211,10 +227,9 @@ function createPasswordInput(document, parentElement, label) {
     return passwordInput;
 }
 
-function createOptionsContainer(document, parentElement) {
+function createOptionsContainer(document, parentElement, opened) {
 
     const optionsButton = document.createElement('button');
-    optionsButton.innerHTML = 'More options...';
     optionsButton.style.cursor = 'pointer';
     optionsButton.style.marginBottom = MARGIN;
 
@@ -222,37 +237,53 @@ function createOptionsContainer(document, parentElement) {
     addBR(parentElement);
 
     const optionsContainer = document.createElement('div');
-    optionsContainer.style.display = 'block';
+
+    if (opened) {
+        optionsButton.innerHTML = 'Less options...';
+        optionsContainer.style.display = 'block';
+        optionsContainer.dataset.opened = true;
+    } else {
+        optionsButton.innerHTML = 'More options...';
+        optionsContainer.style.display = 'none';
+        optionsContainer.dataset.opened = false;
+    }
+    
     parentElement.appendChild(optionsContainer);
 
     optionsButton.addEventListener('click', function () {
-        if (optionsContainer.style.display === 'none') {
-            optionsContainer.style.display = 'block';
-            optionsButton.innerHTML = 'Less options...';
-        } else {
-            optionsContainer.style.display = 'none';
+        if (optionsContainer.style.display === 'block') {
             optionsButton.innerHTML = 'More options...';
+            optionsContainer.style.display = 'none';
+            optionsContainer.dataset.opened = false;
+        } else {
+            optionsButton.innerHTML = 'Less options...';
+            optionsContainer.style.display = 'block';
+            optionsContainer.dataset.opened = true;
         }
     });
 
     return optionsContainer;
 }
 
-function createPasswordLengthInput(document, parentElement) {
+function createGeneratedPasswordLengthInput(document, parentElement, generatedPasswordLength) {
 
-    createLabel(document, parentElement, 'passwordLengthInput', 'Passord Length: ');
+    createLabel(document, parentElement, 'generatedPasswordLengthInput', 'Generated passord length: ');
 
-    return createInputNumber(document, parentElement, 'passwordLengthInput', GENERATED_PASSWORD_LENGTH);
+    if (!generatedPasswordLength) {
+        generatedPasswordLength = GENERATED_PASSWORD_LENGTH;
+    }
+
+    return createInputNumber(document, parentElement, 'generatedPasswordLengthInput', generatedPasswordLength);
 }
 
-function createChekBox(document, parentElement, label) {
+function createChekBox(document, parentElement, id, label, checked) {
 
-    createLabel(document, parentElement, label + 'CheckBox', label + ' characters: ');
+    createLabel(document, parentElement, id, label);
 
     const checkBox = document.createElement('input');
-    checkBox.id = label + 'CheckBox';
+    checkBox.id = id;
     checkBox.type = 'CheckBox';
-    checkBox.checked = true;
+    checkBox.checked = checked;
     checkBox.style.marginBottom = MARGIN;
     checkBox.style.cursor = 'pointer';
 
@@ -262,22 +293,61 @@ function createChekBox(document, parentElement, label) {
     return checkBox;
 }
 
+function createPasswordChekBox(document, parentElement, checkBoxName, checked) {
+
+    if (!checked) {
+        checked = true;
+    }
+
+    return createChekBox(document, parentElement, 
+        checkBoxName + 'CheckBox', checkBoxName + ' characters: ', checked);
+}
 
 function createCodesCardLabel(document, parentElement, codesCardCellLabel) {
 
-    return createLabel(document, parentElement, 'codesCardInput', codesCardCellLabel + ":");
+    return createLabel(document, parentElement, 'codesCardInput', codesCardCellLabel);
 }
 
-function createCodesCardInput(document, parentElement, codesCardCellLabel) {
+function createCodesCardInput(document, parentElement) {
 
-    const input = createInputText(document, parentElement, 'codesCardInput', codesCardCellLabel + "...");
-    input.style.width = LABEL_WIDTH;
+    const input = createInputText(document, parentElement, 'codesCardInput', 'Code of Card Cell...');
+    input.style.width = MIN_INPUT_WIDTH;
     return input;
 }
 
-function createCodesCardLengthInput(document, parentElement) {
+function createCodesCardLengthInput(document, parentElement, numberCodesCardCells) {
 
-    createLabel(document, parentElement, 'codesCardLengthInput', 'Codes Card Length: ');
+    createLabel(document, parentElement, 'codesCardLengthInput', 'Codes card length: ');
 
-    return createInputNumber(document, parentElement, 'codesCardLengthInput', NUMBER_CODES_CARD_CELLS);
+    if (!numberCodesCardCells) {
+        numberCodesCardCells = NUMBER_CODES_CARD_CELLS;
+    }
+
+    return createInputNumber(document, parentElement, 'codesCardLengthInput', numberCodesCardCells);
+}
+
+function createGeneratedUserNameChekBox(document, parentElement, checked) {
+
+    if (!checked) {
+        checked = false;
+    }
+
+    return createChekBox(document, parentElement,
+        'generatedUserNameCheckBox', 'Generated user name:', checked);
+}
+
+function createGeneratedUserNameLengthInput(document, parentElement, generatedUserNameLength) {
+
+    createLabel(document, parentElement, 'generatedUserNameLengthInput', 'Generated user name length: ');
+
+    if (!generatedUserNameLength) {
+        generatedUserNameLength = GENERATED_USERNAME_LENGTH;
+    }
+
+    return createInputNumber(document, parentElement, 'generatedUserNameLengthInput', generatedUserNameLength);
+}
+
+function createGeneratedUserNameInput(document, parentElement) {
+
+    return createInputText(document, parentElement, 'generatedUserNameInput', 'Generated user name...', '', true);
 }

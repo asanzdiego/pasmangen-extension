@@ -4,7 +4,8 @@ function updateFields(updateFieldsObject) {
         'domainSeed': updateFieldsObject.domainInput.value,
         'userNameSeed': updateFieldsObject.userNameInput.value,
         'masterPasswordSeed': updateFieldsObject.masterPasswordInput.value,
-        'passwordLength': updateFieldsObject.passwordLengthInput.value,
+        'codesCardSeed': updateFieldsObject.codesCardInput.value,
+        'passwordLength': updateFieldsObject.generatedPasswordLengthInput.value,
         'hasOthers': updateFieldsObject.specialCheckBox.checked,
         'hasNumber': updateFieldsObject.numberCheckBox.checked,
         'hasUpper': updateFieldsObject.upperCheckBox.checked,
@@ -23,11 +24,25 @@ function updateFields(updateFieldsObject) {
     }
 
     const codesCardCellLabel = generateCodesCardCellLabel(
-        updateFieldsObject.domainInput.value, 
+        updateFieldsObject.domainInput.value,
         updateFieldsObject.userNameInput.value,
         updateFieldsObject.codesCardLengthInput.value);
 
-    updateFieldsObject.codesCardLabel.textContent = codesCardCellLabel + ':';
+    updateFieldsObject.codesCardLabel.textContent = codesCardCellLabel;
+
+    if (updateFieldsObject.generatedUserNameCheckBox.checked) {
+
+        const generateUserName = generateUserNameFromSeeds(
+            updateFieldsObject.domainInput.value,
+            updateFieldsObject.userNameInput.value,
+            updateFieldsObject.generatedUserNameLengthInput.value);
+
+        updateFieldsObject.generatedUserNameInput.value = generateUserName;
+
+        if (updateFieldsObject.userNameField) {
+            updateFieldsObject.userNameField.value = generateUserName;
+        }
+    }
 }
 
 // Function to find previous input of the pasword field (normaly the user name field)
@@ -50,81 +65,129 @@ function previousInput(passwordField) {
     return null;
 }
 
-function closePopover(popover, updateFieldsObject) {
+function closePopover(popover, closeObject) {
 
     popover.style.display = 'none';
+
+    console.log(closeObject);
+
+    setObjectToLocalStorage(window.location.hostname, closeObject);
+}
+
+function copyText(textToCopy) {
+
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(textToCopy);
+    } else {
+        const tempInput = document.createElement('input');
+        document.body.appendChild(tempInput);
+        tempInput.value = textToCopy;
+        tempInput.select();
+        document.execCommand('copy', false);
+        tempInput.remove();
+    }
 }
 
 function initializePopover(passwordField) {
 
     const isIndex = passwordField ? false : true;
-
     const userNameField = previousInput(passwordField);
-
     const popover = createPopover(document);
-
     const closeButton = createCloseButton(document, popover, isIndex);
-    addTitle(document, popover)
-    
-    const domainInput = createDomainInput(document, popover, isIndex);
-    const userNameInput = createUserNameInput(document, popover, userNameField);
+
+    addTitle(document, popover);
+
+    const localStorage = getObjectFromLocalStorage(window.location.hostname);
+
+    const domainInput = createDomainInput(document, popover, isIndex,
+        localStorage ? localStorage.domainInput : null);
+    const userNameInput = createUserNameInput(document, popover, userNameField,
+        localStorage ? localStorage.userNameInput : null);
     const masterPasswordInput = createPasswordInput(document, popover, 'Master');
-    const copyButton = createCopyButton(document, popover)
+    const generatedPasswordCopyButton = createCopyButton(document, popover);
     const generatedPasswordInput = createPasswordInput(document, popover, 'Generated');
 
-    const optionsContainer = createOptionsContainer(document, popover);
-    
-    addSeparationLine(document, optionsContainer)
+    const optionsContainer = createOptionsContainer(document, popover,
+        localStorage ? localStorage.optionsContainer : null);
 
-    const passwordLengthInput = createPasswordLengthInput(document, optionsContainer);
-    const upperCheckBox = createChekBox(document, optionsContainer, 'Upper');
-    const lowerCheckBox = createChekBox(document, optionsContainer, 'Lower');
-    const specialCheckBox = createChekBox(document, optionsContainer, 'Special');
-    const numberCheckBox = createChekBox(document, optionsContainer, 'Number');
-    
-    addSeparationLine(document, optionsContainer)
+    addSeparationLine(document, optionsContainer);
 
-    const codesCardLengthInput = createCodesCardLengthInput(document, optionsContainer);
+    const generatedPasswordLengthInput = createGeneratedPasswordLengthInput(document, optionsContainer,
+        localStorage ? localStorage.passwordLengthInput : null);
+    const upperCheckBox = createPasswordChekBox(document, optionsContainer, 'Upper',
+        localStorage ? localStorage.upperCheckBox : null);
+    const lowerCheckBox = createPasswordChekBox(document, optionsContainer, 'Lower',
+        localStorage ? localStorage.lowerCheckBox : null);
+    const specialCheckBox = createPasswordChekBox(document, optionsContainer, 'Special',
+        localStorage ? localStorage.specialCheckBox : null);
+    const numberCheckBox = createPasswordChekBox(document, optionsContainer, 'Number',
+        localStorage ? localStorage.numberCheckBox : null);
+
+    addSeparationLine(document, optionsContainer);
+
+    const codesCardLengthInput = createCodesCardLengthInput(document, optionsContainer,
+        localStorage ? localStorage.codesCardLengthInput : null);
     const codesCardCellLabel = generateCodesCardCellLabel(
         domainInput.value, userNameInput.value, codesCardLengthInput.value);
     const codesCardLabel = createCodesCardLabel(document, optionsContainer, codesCardCellLabel);
-    const codesCardInput = createCodesCardInput(document, optionsContainer, codesCardCellLabel);
-    
+    const codesCardInput = createCodesCardInput(document, optionsContainer);
+
+    addSeparationLine(document, optionsContainer);
+
+    const generatedUserNameCheckBox = createGeneratedUserNameChekBox(document, optionsContainer,
+        localStorage ? localStorage.generatedUserNameCheckBox : null);
+    const generatedUserNameCopyButton = createCopyButton(document, optionsContainer);
+    const generatedUserNameLengthInput = createGeneratedUserNameLengthInput(document, optionsContainer,
+        localStorage ? localStorage.generatedUserNameLengthInput : null);
+    const generatedUserNameInput = createGeneratedUserNameInput(document, optionsContainer);
+
     const updateFieldsObject = {
         'userNameField': userNameField,
         'passwordField': passwordField,
         'domainInput': domainInput,
         'userNameInput': userNameInput,
         'masterPasswordInput': masterPasswordInput,
-        'codesCardLengthInput': codesCardLengthInput,
-        'codesCardLabel': codesCardLabel,
-        'codesCardInput': codesCardInput,
-        'passwordLengthInput': passwordLengthInput,
+        'generatedPasswordInput': generatedPasswordInput,
+        'generatedPasswordLengthInput': generatedPasswordLengthInput,
         'specialCheckBox': specialCheckBox,
         'numberCheckBox': numberCheckBox,
         'upperCheckBox': upperCheckBox,
         'lowerCheckBox': lowerCheckBox,
-        'generatedPasswordInput': generatedPasswordInput,
-    }
+        'codesCardLengthInput': codesCardLengthInput,
+        'codesCardLabel': codesCardLabel,
+        'codesCardInput': codesCardInput,
+        'generatedUserNameCheckBox': generatedUserNameCheckBox,
+        'generatedUserNameLengthInput': generatedUserNameLengthInput,
+        'generatedUserNameInput': generatedUserNameInput,
+    };
 
     if (closeButton) {
         closeButton.addEventListener('click', function () {
-            closePopover(popover, updateFieldsObject)
+
+            const closeObject = {
+                'domainInput': domainInput.value,
+                'userNameInput': userNameInput.value,
+                'optionsContainer': optionsContainer.dataset.opened,
+                'generatedPasswordLengthInput': generatedPasswordLengthInput.value,
+                'specialCheckBox': specialCheckBox.checked,
+                'numberCheckBox': numberCheckBox.checked,
+                'upperCheckBox': upperCheckBox.checked,
+                'lowerCheckBox': lowerCheckBox.checked,
+                'codesCardLengthInput': codesCardLengthInput.value,
+                'generatedUserNameCheckBox': generatedUserNameCheckBox.checked,
+                'generatedUserNameLengthInput': generatedUserNameLengthInput.value,
+            };
+            
+            closePopover(popover, closeObject)
         });
     }
 
-    copyButton.addEventListener('click', function () {
-        const textToCopy = generatedPasswordInput.value;
-        if (navigator.clipboard) {
-            navigator.clipboard.writeText(textToCopy);
-        } else {
-            const tempInput = document.createElement('input');
-            document.body.appendChild(tempInput);
-            tempInput.value = textToCopy;
-            tempInput.select();
-            document.execCommand('copy', false);
-            tempInput.remove();
-        }
+    generatedPasswordCopyButton.addEventListener('click', function () {
+        copyText(generatedPasswordInput.value);
+    });
+
+    generatedUserNameCopyButton.addEventListener('click', function () {
+        copyText(generatedUserNameInput.value);
     });
 
     if (userNameField) {
@@ -142,13 +205,7 @@ function initializePopover(passwordField) {
     masterPasswordInput.addEventListener('input', function (event) {
         updateFields(updateFieldsObject);
     });
-    codesCardInput.addEventListener('input', function (event) {
-        updateFields(updateFieldsObject);
-    });
-    codesCardLengthInput.addEventListener('input', function (event) {
-        updateFields(updateFieldsObject);
-    });
-    passwordLengthInput.addEventListener('input', function (event) {
+    generatedPasswordLengthInput.addEventListener('input', function (event) {
         updateFields(updateFieldsObject);
     });
     specialCheckBox.addEventListener('input', function (event) {
@@ -161,6 +218,18 @@ function initializePopover(passwordField) {
         updateFields(updateFieldsObject);
     });
     upperCheckBox.addEventListener('input', function (event) {
+        updateFields(updateFieldsObject);
+    });
+    codesCardLengthInput.addEventListener('input', function (event) {
+        updateFields(updateFieldsObject);
+    });
+    codesCardInput.addEventListener('input', function (event) {
+        updateFields(updateFieldsObject);
+    });
+    generatedUserNameCheckBox.addEventListener('input', function (event) {
+        updateFields(updateFieldsObject);
+    });
+    generatedUserNameLengthInput.addEventListener('input', function (event) {
         updateFields(updateFieldsObject);
     });
 

@@ -1,35 +1,19 @@
-function generateCodesCardCell(domain, userName, numberCodesCardCells) {
+function generateHashFromText(text) {
 
-    const text = "" + domain.toLowerCase() + userName.toLowerCase();
-
-    let sumCharCode = 0;
-    for (var i = 0; i < text.length; i++) {
-        sumCharCode += text.charCodeAt(i);
-    }
-    return sumCharCode % numberCodesCardCells;
-}
-
-function generateCodesCardCellLabel(domain, userName, numberCodesCardCells) {
-
-    const codesCardCell = generateCodesCardCell(domain, userName, numberCodesCardCells);
-    return 'Code of Card Cell [' + codesCardCell + ']';
+    const shaobject = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
+    shaobject.update(text);
+    return shaobject.getHash('B64');
 }
 
 function generatePasswordFromSeeds(passwordSeed) {
 
     const data = passwordSeed.domainSeed.toLowerCase()
         + passwordSeed.userNameSeed.toLowerCase()
-        + passwordSeed.masterPasswordSeed;
+        + passwordSeed.masterPasswordSeed
+        + passwordSeed.codesCardSeed;
     const hash = generateHashFromText(data);
 
     return normalizePassword(hash, passwordSeed);
-}
-
-function generateHashFromText(text) {
-
-    const shaObj = new jsSHA("SHA-512", "TEXT", { encoding: "UTF8" });
-    shaObj.update(text);
-    return shaObj.getHash("B64");
 }
 
 function normalizePassword(password, passwordSeed) {
@@ -47,7 +31,7 @@ function normalizePassword(password, passwordSeed) {
     const upper = /[A-Z]/;
     const lower = /[a-z]/;
 
-    var append = ""
+    var append = ''
 
     if ((!hasOthers) && (!hasNumber) && (!hasUpper) && (!hasLower)) {
         return newPassword;
@@ -55,7 +39,7 @@ function normalizePassword(password, passwordSeed) {
 
     if (hasOthers) {
         if (normal.test(newPassword)) {
-            append = append + ".";
+            append = append + '.';
         }
     } else {
         var i = 0;
@@ -67,7 +51,7 @@ function normalizePassword(password, passwordSeed) {
 
     if (hasNumber) {
         if (!number.test(newPassword)) {
-            append = append + "0";
+            append = append + '0';
         }
     } else {
         var i = 0;
@@ -79,7 +63,7 @@ function normalizePassword(password, passwordSeed) {
 
     if (hasUpper) {
         if (!upper.test(newPassword)) {
-            append = append + "M";
+            append = append + 'M';
         }
     } else {
         newPassword = newPassword.toLowerCase();
@@ -87,7 +71,7 @@ function normalizePassword(password, passwordSeed) {
 
     if (hasLower) {
         if (!lower.test(newPassword)) {
-            append = append + "p";
+            append = append + 'p';
         }
     } else {
         newPassword = newPassword.toUpperCase();
@@ -116,3 +100,54 @@ function normalizePassword(password, passwordSeed) {
 
     return newPassword;
 }
+
+function generateCodesCardCell(domain, userName, numberCodesCardCells) {
+
+    const text = '' + domain.toLowerCase() + userName.toLowerCase();
+
+    let sumCharCode = 0;
+    for (var i = 0; i < text.length; i++) {
+        sumCharCode += text.charCodeAt(i);
+    }
+    return sumCharCode % numberCodesCardCells;
+}
+
+function generateCodesCardCellLabel(domain, userName, numberCodesCardCells) {
+
+    const codesCardCell = generateCodesCardCell(domain, userName, numberCodesCardCells);
+    return 'Code of card cell [' + codesCardCell + ']:';
+}
+
+function generateUserNameFromSeeds(domainSeed, userNameSeed, generatedUserNameLength) {
+
+    const data = domainSeed.toLowerCase() + userNameSeed.toLowerCase();
+    const hash = generateHashFromText(data);
+
+    return normalizeUserName(hash, generatedUserNameLength);
+}
+
+function normalizeUserName(hash, generatedUserNameLength) {
+
+    let userName = hash.replace(/[^a-zA-Z0-9]/g, function () {
+        return '';
+    });
+
+    userName = 'p' + userName.toLowerCase();
+
+    return userName.slice(0, generatedUserNameLength);
+}
+
+
+function getObjectFromLocalStorage(objectName) {
+
+    var object = localStorage.getItem(objectName);
+    if (object) {
+        object = JSON.parse(object);
+    }
+    return object;
+};
+
+function setObjectToLocalStorage(objectName, object) {
+
+    localStorage.setItem(objectName, JSON.stringify(object));
+};

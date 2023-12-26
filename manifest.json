@@ -5,7 +5,7 @@
   "version": "1.0",
   "homepage_url": "https://pasmangen.github.io/",
   "icons": {
-    "48": "icons/encrypted.svg"
+    "48": "icons/pmg-logo.png"
   },
   "permissions": [
     "tabs",
@@ -17,8 +17,9 @@
         "<all_urls>"
       ],
       "js": [
-        "js/main.js",
+        "js/elements.js",
         "js/extension.js",
+        "js/main.js",
         "js/popover.js",
         "lib/jsSHA-3.3.1/sha512.js"
       ]
